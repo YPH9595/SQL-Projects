@@ -91,7 +91,7 @@ WITH RECURSION AS
     JOIN GROUP_MAX_SUBMISSIONS ON MAX_ENTRY.min = GROUP_MAX_SUBMISSIONS.RN)
     
 --RESULT 
-    SELECT COUNT_SUBS_PER_DAY.submission_date, sum, Hackers.hacker_id, name
+    SELECT COUNT_SUBS_PER_DAY.submission_date, sum AS No_Of_Consistents, Hackers.hacker_id AS best_hacker_id, name AS best_hacker_id
     FROM COUNT_SUBS_PER_DAY
     JOIN MAX_SUB_PER_DAY ON COUNT_SUBS_PER_DAY.submission_date = MAX_SUB_PER_DAY.submission_date
     JOIN Hackers ON Hackers.hacker_id = MAX_SUB_PER_DAY.hacker_id;
