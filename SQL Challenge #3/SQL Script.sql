@@ -52,7 +52,6 @@ FROM Hackers;
 SELECT *
 FROM Submissions;
 
- 
 -- total number of unique hackers who made at least 1 submission each day (starting on the first day of the contest)
 WITH RECURSION AS 
     (SELECT Submissions.submission_date, hacker_id -- BASE
@@ -60,30 +59,26 @@ WITH RECURSION AS
     (SELECT TOP 1 submission_date -- FOR MAKING THE BASE 
     FROM Submissions
     GROUP BY submission_date
+    ORDER BY submission_date
     ) TOP_ONE
     WHERE Submissions.submission_date = TOP_ONE.submission_date
+
     UNION ALL 
+    
     SELECT Submissions.submission_date, Submissions.hacker_id -- RECURSION 
     FROM RECURSION
     JOIN Submissions ON dateadd(DAY, +1, RECURSION.submission_date) = Submissions.submission_date AND RECURSION.hacker_id = Submissions.hacker_id),
 
     COUNT_SUBS_PER_DAY AS
-    (SELECT submission_date, COUNT(count) AS sum
-    FROM (
-        SELECT *, 1 AS count
-        FROM RECURSION
-        GROUP BY submission_date, hacker_id) 
-        RECURSION_GROUPED
+    (SELECT submission_date, COUNT(DISTINCT hacker_id) AS sum
+    FROM RECURSION
     GROUP BY submission_date),
 
 --hacker_id and name of the hacker who made maximum number of submissions each day
     GROUP_MAX_SUBMISSIONS AS
-    (SELECT ROW_NUMBER() OVER (ORDER BY submission_date, COUNT(submission_count) DESC, hacker_id) AS RN,
-    submission_date, hacker_id, COUNT(submission_count) AS sum
-    FROM (
-        SELECT submission_date, hacker_id, 1 AS submission_count
-        FROM Submissions
-        ) ADD_ONES
+    (SELECT ROW_NUMBER() OVER (ORDER BY submission_date, COUNT(*) DESC, hacker_id) AS RN,
+    submission_date, hacker_id, COUNT(*) AS sum
+    FROM Submissions
     GROUP BY submission_date, hacker_id), 
 
     MAX_SUB_PER_DAY AS
@@ -95,7 +90,7 @@ WITH RECURSION AS
         ) MAX_ENTRY 
     JOIN GROUP_MAX_SUBMISSIONS ON MAX_ENTRY.min = GROUP_MAX_SUBMISSIONS.RN)
     
-    --RESULT 
+--RESULT 
     SELECT COUNT_SUBS_PER_DAY.submission_date, sum, Hackers.hacker_id, name
     FROM COUNT_SUBS_PER_DAY
     JOIN MAX_SUB_PER_DAY ON COUNT_SUBS_PER_DAY.submission_date = MAX_SUB_PER_DAY.submission_date
