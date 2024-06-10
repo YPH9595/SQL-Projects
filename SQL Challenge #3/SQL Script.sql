@@ -88,14 +88,13 @@ MAX_SUBMISSIONS AS (
 
 -- list of hackers with maximum submissions per day 
 MAX_SUBS_PER_DAY AS (
-    SELECT MAX_ENTRY.submission_date, hacker_id
+    SELECT submission_date, hacker_id
     FROM (
-        SELECT submission_date, MIN(RN) AS min_rn
+        SELECT MIN(RN) AS min_rn
         FROM MAX_SUBMISSIONS
         GROUP BY submission_date
     ) MAX_ENTRY 
-    JOIN MAX_SUBMISSIONS ON MAX_ENTRY.submission_date = MAX_SUBMISSIONS.submission_date 
-        AND MAX_ENTRY.min_rn = MAX_SUBMISSIONS.RN
+    JOIN MAX_SUBMISSIONS ON MAX_ENTRY.min_rn = MAX_SUBMISSIONS.RN
 )
 
 -- RESULT 
