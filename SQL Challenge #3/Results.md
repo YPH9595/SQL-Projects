@@ -1,4 +1,4 @@
-|submission_date|No_Of_Consistents|best_hacker_id|best_hacker_id|
+|submission_date|unique_hackers_count|hacker_id|name|
 |---|---|---|---|
 |2016-03-01|4|20703|Angela|
 |2016-03-02|2|79722|Michael|
