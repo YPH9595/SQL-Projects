@@ -56,7 +56,7 @@ WITH BATCH_CTE AS
 
 ### Prerequisites
 
-This script was written in MySQL using Microsoft SQL Server Management Studio (SSMS). For installation:
+This script was written in Microsoft SQL Server using Microsoft SQL Server Management Studio (SSMS). For installation:
 
 
 * [Install SQL Server 2022 on Windows](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
