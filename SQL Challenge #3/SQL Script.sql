@@ -52,33 +52,37 @@ FROM Hackers;
 SELECT *
 FROM Submissions;
 
--- list unique hackers who made at least 1 submission each day (starting on the first day of the contest)
+-- List unique hackers who made at least 1 submission each day (starting on the first day of the contest)
+
 WITH CTE AS (
-    SELECT Submissions.submission_date, hacker_id -- BASE; made of the first date entries in Submission table 
-    FROM Submissions, (
+    -- BASE: made of the first date entries in Submission table 
+    SELECT S.submission_date, hacker_id 
+    FROM Submissions S, (
         SELECT TOP 1 submission_date 
         FROM Submissions
         GROUP BY submission_date
         ORDER BY submission_date
     ) TOP_ONE -- the first date  
-    WHERE Submissions.submission_date = TOP_ONE.submission_date
+    WHERE S.submission_date = TOP_ONE.submission_date
 
     UNION ALL 
     
-    SELECT Submissions.submission_date, Submissions.hacker_id -- CTE 
+    -- Recursive part of the CTE
+    SELECT S.submission_date, S.hacker_id 
     FROM CTE
-    JOIN Submissions ON DATEADD(DAY, +1, CTE.submission_date) = Submissions.submission_date 
-        AND CTE.hacker_id = Submissions.hacker_id
+    JOIN Submissions S 
+        ON DATEADD(DAY, +1, CTE.submission_date) = S.submission_date 
+        AND CTE.hacker_id = S.hacker_id
 ),
 
--- count unique hackers per day
+-- Count unique hackers per day
 UNIQUE_HACKERS_PER_DAY AS (
     SELECT submission_date, COUNT(DISTINCT hacker_id) AS unique_hackers_count
     FROM CTE
     GROUP BY submission_date
 ),
 
--- ordered list of hackers based on number of submissions, for each day
+-- Ordered list of hackers based on number of submissions, for each day
 MAX_SUBMISSIONS AS (
     SELECT ROW_NUMBER() OVER (ORDER BY submission_date, COUNT(*) DESC, hacker_id) AS RN,
            submission_date, hacker_id
@@ -86,7 +90,7 @@ MAX_SUBMISSIONS AS (
     GROUP BY submission_date, hacker_id
 ),
 
--- list of hackers with maximum submissions per day 
+-- List of hackers with maximum submissions per day 
 MAX_SUBS_PER_DAY AS (
     SELECT submission_date, hacker_id
     FROM (
@@ -94,14 +98,15 @@ MAX_SUBS_PER_DAY AS (
         FROM MAX_SUBMISSIONS
         GROUP BY submission_date
     ) MAX_ENTRY 
-    JOIN MAX_SUBMISSIONS ON MAX_ENTRY.min_rn = MAX_SUBMISSIONS.RN
+    JOIN MAX_SUBMISSIONS MS ON MAX_ENTRY.min_rn = MS.RN
 )
 
 -- RESULT 
-SELECT UNIQUE_HACKERS_PER_DAY.submission_date, unique_hackers_count, Hackers.hacker_id, Hackers.name
-FROM UNIQUE_HACKERS_PER_DAY
-JOIN MAX_SUBS_PER_DAY ON UNIQUE_HACKERS_PER_DAY.submission_date = MAX_SUBS_PER_DAY.submission_date
-JOIN Hackers ON MAX_SUBS_PER_DAY.hacker_id = Hackers.hacker_id;
+SELECT UQ.submission_date, unique_hackers_count, Hackers.hacker_id, Hackers.name
+FROM UNIQUE_HACKERS_PER_DAY UQ
+JOIN MAX_SUBS_PER_DAY MX ON UQ.submission_date = MX.submission_date
+JOIN Hackers ON MX.hacker_id = Hackers.hacker_id;
+
 
 -- DROP TABLE Hackers;
 -- DROP TABLE Submissions;
