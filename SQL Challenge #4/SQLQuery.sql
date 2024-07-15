@@ -1,3 +1,5 @@
+--@AUTHOR Jasmine Abtahi
+
 -- Create the inventory table
 CREATE TABLE inventory (
     item_id INTEGER,
