@@ -36,7 +36,7 @@ Your output must look like this:
 |176|102|0|0|
 
 
-## **Solution **
+## **Solution**
 The items that come in first will go out first. Imagine all items listed in the order of their arrival dates. Now, each time an item is sold (`OutBound`), we cross off one of the (`InBound`) items. To implement this logic, we can expand our table to include a column of `1`'s, with one `1` for each `InBound` item. We will also add another column with one `1` for each `OutBound` item. By putting these two columns together and subtracting the outbound values from the `InBound` values, the `1`'s in the `InBound` column that are not subtracted to zero represent the remaining items. 
 
 1) The `CTE` starts by listing each `InBound` and `OutBound` event types with an initial quantity of `1`.
@@ -162,7 +162,7 @@ REMAINED AS (
 |2020-04-25 18:00:00.000|102|
 |2020-05-24 22:00:00.000|31|
 
-6) Now, we assign each `remained` row a `event_period` based on the age of the `event_datetime` relative to the latest `event_datetime`.
+6) Now, we assign each `remained` row to an `event_period` based on the age of the `event_datetime`, and relative to the latest `event_datetime`.
 
 ```SQL
 --CRETAE THE 4 PERIOD INTERVALS 
@@ -194,7 +194,7 @@ PERIODS AS (
 |102|4|
 |31|4|
 
-7) Lastly, we aggregate the `remained` column, and add columns for each age period
+7) Lastly, we aggregate the `remained` column, and add columns for each age period.
 
 ```SQL
 --ADD THE RIGHT COLUMNS FOR OUTPUT 

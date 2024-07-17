@@ -81,7 +81,7 @@ PERIODS AS (
 ),
 --ADD THE RIGHT COLUMNS FOR OUTPUT 
 RESULT AS (
-    SELECT SUM(REMAINED) AS total_remained, event_period
+    SELECT SUM(remained) AS total_remained, event_period
     FROM PERIODS 
     GROUP BY event_period
 )
