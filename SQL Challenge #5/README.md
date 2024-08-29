@@ -119,8 +119,6 @@ WITH CTE AS
 |4|2023-03-01|2023-03-02|1|2|
 
 ### Result
-Now that we have our group indicators, it's time for the last step: group the events in each hall and calculate the start day and end day of each group. 
-
 With our group indicators in place, the final step is to group the events within each hall based on these indicators. Then, we'll calculate the earliest `start_day` and the latest `end_day` for each group, effectively merging the overlapping events.
 
 ```sql
