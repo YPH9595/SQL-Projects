@@ -36,7 +36,8 @@ Assume that items are sequencially taken from each batch starting from the first
 ## Solution
 We need to expand our tables using CTE (Common Table Expression) to create rows with a value of 1 in the quantity column. By adding the ROW_NUMBER() function, we can then join these two tables on the ROW_NUMBER() column and group them in order to count the sum of items that have a quantity of 1. This will help us determine which order needs to match with which batch.
 
-```
+```sql
+
 -- EXPANDING THE BATCH TABLE WITH 1'S USING CTE (COMMON TABLE EXPRESSION)
 WITH BATCH_CTE AS
     (SELECT BATCH_ID, 1 AS QUANTITY -- BASE 
